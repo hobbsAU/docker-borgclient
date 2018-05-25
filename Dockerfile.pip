@@ -1,0 +1,24 @@
+#Borgbackup Dockerfile
+FROM alpine:edge
+MAINTAINER Adrian Hobbs <adrianhobbs@gmail.com>
+ENV PACKAGE "python3 openssh-client alpine-sdk openssl-dev python3-dev lz4-dev acl-dev linux-headers"
+
+# Install package using --no-cache to update index and remove unwanted files
+RUN 	apk add --no-cache --upgrade apk-tools && \
+	apk upgrade && \
+	apk add $PACKAGE  && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache && \
+    pip3 install borgbackup && \
+    apk del alpine-sdk python3-dev linux-headers && \
+    rm -rf /var/cache/apk/* && \
+    mkdir /cache
+
+ENV BORG_CACHE_DIR /cache
+
+ENTRYPOINT ["/usr/bin/borg"]
+
