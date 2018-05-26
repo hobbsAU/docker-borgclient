@@ -19,6 +19,7 @@ RUN	apk add --no-cache --upgrade apk-tools && \
     mkdir /cache
 
 ENV BORG_CACHE_DIR /cache
+WORKDIR /tmp
 
 ENTRYPOINT ["/usr/bin/borg"]
 
