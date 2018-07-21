@@ -1,12 +1,14 @@
 #Borgbackup Dockerfile
 FROM alpine:edge
 MAINTAINER Adrian Hobbs <adrianhobbs@gmail.com>
-ENV PACKAGE "borgbackup openssh-client"
+ENV PACKAGE "borgbackup openssh-client tzdata"
 
 # Install package using --no-cache to update index and remove unwanted files
 RUN	apk add --no-cache --upgrade apk-tools && \
         apk upgrade && \
         apk add $PACKAGE  && \
+	cp /usr/share/zoneinfo/Asia/Dubai /etc/localtime && \
+	echo "Asia/Dubai" > /etc/timezone && \
 # Fix for borgbackup 1.1.5 http://borgbackup.readthedocs.io/en/stable/changes.html#version-1-1-5-2018-04-01
 #    python3 -m ensurepip && \
 #    rm -r /usr/lib/python*/ensurepip && \
